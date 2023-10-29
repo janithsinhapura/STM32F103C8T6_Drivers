@@ -1,0 +1,32 @@
+#include "stm32f10x.h"
+#include "rcc.h"
+
+void HSE_8MHZ(void)
+{
+	RCC->CR |=RCC_CR_HSEON;
+	
+	while((RCC->CR & RCC_CR_HSERDY) == 0);
+	
+	RCC->CFGR &= ~(RCC_CFGR_SW);
+	RCC->CFGR |=RCC_CFGR_SW_HSE;
+		
+	while((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_HSE);
+
+}
+
+void HSE_PLL_SYS_CLK_MAX(void)
+{
+	RCC->CR |=RCC_CR_HSEON;
+	while((RCC->CR & RCC_CR_HSERDY) == 0);
+	
+	RCC->CFGR |= RCC_CFGR_PLLSRC_HSE;
+	RCC->CFGR |=RCC_CFGR_PLLMULL9;
+	RCC->CFGR |=RCC_CFGR_PPRE1_DIV2;
+	RCC->CFGR |=RCC_CFGR_ADCPRE_DIV6;
+	
+	RCC->CFGR &=~RCC_CFGR_SW;
+	RCC->CFGR |=RCC_CFGR_SW_PLL;
+	
+	while((RCC->CFGR & RCC_CFGR_SWS_PLL) !=RCC_CFGR_SWS_PLL);
+}
+
